@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTFOLIO</title>
+    <!-- Pixel art font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Press Start 2P', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding-top: 8vh;
+            box-sizing: border-box;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .header-container {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 26px;
+            letter-spacing: 2px;
+            margin: 0 0 12px 0;
+        }
+
+        .subtitle {
+            font-size: 11px;
+            color: #aaaaaa;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .discord-tag {
+            font-size: 8px;
+            color: #5865F2; /* Color característico de Discord */
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            margin-bottom: 40px;
+            gap: 22px;
+        }
+
+        .player-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .arrow {
+            font-size: 22px;
+            cursor: pointer;
+            color: #ffffff;
+            transition: color 0.1s, transform 0.1s;
+            padding: 10px;
+        }
+
+        .arrow:hover {
+            color: #ffff00;
+        }
+
+        .arrow:active {
+            transform: scale(0.9);
+        }
+
+        #song-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            gap: 12px;
+        }
+
+        #song-title {
+            font-size: 18px;
+            color: #ffff00;
+            text-align: center;
+            min-width: 300px;
+            max-width: 450px;
+            word-wrap: break-word;
+        }
+
+        #play-status {
+            font-size: 9px;
+            color: #888888;
+            letter-spacing: 1px;
+        }
+
+        /* --- Estilos compartidos para sliders --- */
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: #333333;
+            outline: none;
+            cursor: pointer;
+            border: 1px solid #ffffff;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 10px;
+            height: 14px;
+            background: #ffff00;
+            cursor: pointer;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            width: 10px;
+            height: 14px;
+            background: #ffff00;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* --- Timeline / Progress Bar --- */
+        .timeline-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 320px;
+        }
+
+        .seek-slider {
+            width: 100%;
+            height: 8px;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 8px;
+            color: #aaaaaa;
+        }
+
+        /* --- Control de Volumen --- */
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 8px;
+            color: #aaaaaa;
+            margin-top: 5px;
+        }
+
+        .volume-slider {
+            width: 100px;
+            height: 6px;
+        }
+
+        .instructions {
+            position: absolute;
+            bottom: 25px;
+            font-size: 8px;
+            color: #555555;
+            text-align: center;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <h1>PORTFOLIO</h1>
+        <div class="subtitle">by Cristo</div>
+        <div class="discord-tag">Discord: cristo07</div>
+    </div>
+
+    <div class="main-content">
+        <div class="player-container">
+            <div class="arrow" id="prev-btn">&lt;&lt;</div>
+            
+            <div id="song-info" title="Click to Play / Pause">
+                <div id="song-title">intro theme</div>
+                <div id="play-status">[ PAUSED ]</div>
+            </div>
+
+            <div class="arrow" id="next-btn">&gt;&gt;</div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline-container">
+            <input type="range" id="seek-slider" class="seek-slider" value="0" max="100">
+            <div class="time-display">
+                <span id="current-time">0:00</span>
+                <span id="remaining-time">-0:00</span>
+            </div>
+        </div>
+
+        <!-- Volume Control -->
+        <div class="volume-container">
+            <span id="volume-icon">VOL:</span>
+            <input type="range" id="volume-slider" class="volume-slider" value="80" max="100">
+            <span id="volume-percentage">80%</span>
+        </div>
+    </div>
+
+    <div class="instructions">
+        Use the arrows <b>[ &lt;&lt; ] [ &gt;&gt; ]</b> to change tracks<br>
+        Click on the title or status to play / pause
+    </div>
+
+    <!-- Audio element -->
+    <audio id="audio-element" preload="auto"></audio>
+
+    <script>
+        const playlist = [
+            { name: "intro theme", src: "canciones/intro theme.mp3" },
+            { name: "Precise Shine", src: "canciones/Precise Shine.mp3" },
+            { name: "I'M A GOOD LEADER!!", src: "canciones/I'M A GOOD LEADER!!.mp3" },
+            { name: "Fuchsia Lover 2", src: "canciones/Fuchsia Lover 2.mp3" }
+        ];
+
+        let currentIndex = 0;
+        let isPlaying = false;
+
+        const audioElement = document.getElementById('audio-element');
+        const songTitleElement = document.getElementById('song-title');
+        const playStatusElement = document.getElementById('play-status');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const songInfoContainer = document.getElementById('song-info');
+        
+        const seekSlider = document.getElementById('seek-slider');
+        const currentTimeElement = document.getElementById('current-time');
+        const remainingTimeElement = document.getElementById('remaining-time');
+
+        const volumeSlider = document.getElementById('volume-slider');
+        const volumePercentage = document.getElementById('volume-percentage');
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        function loadSong(index) {
+            songTitleElement.textContent = playlist[index].name;
+            audioElement.src = playlist[index].src;
+            audioElement.load();
+            seekSlider.value = 0;
+            currentTimeElement.textContent = "0:00";
+            remainingTimeElement.textContent = "-0:00";
+        }
+
+        function playSong() {
+            audioElement.play().then(() => {
+                isPlaying = true;
+                playStatusElement.textContent = "[ PLAYING ]";
+                playStatusElement.style.color = "#00ff00";
+            }).catch(error => {
+                console.log("Playback error:", error);
+            });
+        }
+
+        function pauseSong() {
+            audioElement.pause();
+            isPlaying = false;
+            playStatusElement.textContent = "[ PAUSED ]";
+            playStatusElement.style.color = "#888888";
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                pauseSong();
+            } else {
+                playSong();
+            }
+        }
+
+        function nextSong() {
+            currentIndex = (currentIndex + 1) % playlist.length;
+            loadSong(currentIndex);
+            if (isPlaying) playSong();
+        }
+
+        function prevSong() {
+            currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+            loadSong(currentIndex);
+            if (isPlaying) playSong();
+        }
+
+        // --- Eventos de Tiempo ---
+        audioElement.addEventListener('timeupdate', () => {
+            if (audioElement.duration) {
+                const progress = (audioElement.currentTime / audioElement.duration) * 100;
+                seekSlider.value = progress;
+                
+                currentTimeElement.textContent = formatTime(audioElement.currentTime);
+                const remaining = audioElement.duration - audioElement.currentTime;
+                remainingTimeElement.textContent = "-" + formatTime(remaining);
+            }
+        });
+
+        seekSlider.addEventListener('input', () => {
+            if (audioElement.duration) {
+                const seekTo = (seekSlider.value / 100) * audioElement.duration;
+                audioElement.currentTime = seekTo;
+            }
+        });
+
+        // --- Control de Volumen ---
+        audioElement.volume = 0.8; // Inicial al 80%
+
+        volumeSlider.addEventListener('input', () => {
+            const val = volumeSlider.value;
+            audioElement.volume = val / 100;
+            volumePercentage.textContent = `${val}%`;
+        });
+
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            nextSong();
+        });
+
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            prevSong();
+        });
+
+        songInfoContainer.addEventListener('click', togglePlay);
+
+        audioElement.addEventListener('ended', () => {
+            nextSong();
+        });
+
+        loadSong(currentIndex);
+    </script>
+</body>
+</html>
