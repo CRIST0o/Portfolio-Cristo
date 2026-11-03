@@ -24,6 +24,7 @@
 
         .header-container {
             text-align: center;
+            width: 90%;
         }
 
         h1 {
@@ -41,7 +42,7 @@
 
         .discord-tag {
             font-size: 8px;
-            color: #7289da; /* Color característico de Discord */
+            color: #7289da;
             letter-spacing: 1px;
         }
 
@@ -53,13 +54,16 @@
             flex: 1;
             margin-bottom: 40px;
             gap: 22px;
+            width: 100%;
         }
 
         .player-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 40px;
+            gap: 20px;
+            width: 90%;
+            max-width: 600px;
         }
 
         .arrow {
@@ -68,6 +72,7 @@
             color: #ffffff;
             transition: color 0.1s, transform 0.1s;
             padding: 10px;
+            flex-shrink: 0;
         }
 
         .arrow:hover {
@@ -80,21 +85,21 @@
 
         #song-title {
             font-size: 18px;
-            color: #ffffff; /* Por defecto en blanco */
+            color: #ffffff;
             text-align: center;
-            min-width: 300px;
-            max-width: 450px;
+            flex: 1;
             word-wrap: break-word;
+            overflow-wrap: break-word;
             cursor: pointer;
             transition: color 0.1s;
+            line-height: 1.4;
         }
 
-        /* Clase dinámica que aplica el color amarillo solo al sonar */
         #song-title.playing {
             color: #ffff00;
         }
 
-        /* --- Estilos compartidos para sliders --- */
+        /* --- Sliders --- */
         input[type=range] {
             -webkit-appearance: none;
             appearance: none;
@@ -121,13 +126,14 @@
             border: none;
         }
 
-        /* --- Timeline / Progress Bar --- */
+        /* --- Timeline --- */
         .timeline-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 8px;
-            width: 320px;
+            width: 90%;
+            max-width: 320px;
         }
 
         .seek-slider {
@@ -165,6 +171,44 @@
             color: #555555;
             text-align: center;
             line-height: 1.6;
+            width: 90%;
+        }
+
+        /* --- ADAPTACIÓN RESPONSIVA PARA CELULARES --- */
+        @media (max-width: 600px) {
+            body {
+                padding-top: 5vh;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .subtitle {
+                font-size: 9px;
+            }
+
+            .player-container {
+                gap: 10px;
+            }
+
+            .arrow {
+                font-size: 16px;
+                padding: 5px;
+            }
+
+            #song-title {
+                font-size: 13px;
+            }
+
+            .timeline-container {
+                width: 85%;
+            }
+
+            .instructions {
+                font-size: 7px;
+                bottom: 15px;
+            }
         }
     </style>
 </head>
@@ -180,7 +224,6 @@
         <div class="player-container">
             <div class="arrow" id="prev-btn">&lt;&lt;</div>
             
-            <!-- Título que actúa como botón Play/Pause sin div extra ni estado abajo -->
             <div id="song-title" title="Click to Play / Pause">Precise Shine</div>
 
             <div class="arrow" id="next-btn">&gt;&gt;</div>
@@ -254,7 +297,7 @@
         function playSong() {
             audioElement.play().then(() => {
                 isPlaying = true;
-                songTitleElement.classList.add('playing'); // Cambia a amarillo (#ffff00)
+                songTitleElement.classList.add('playing');
             }).catch(error => {
                 console.log("Playback error:", error);
             });
@@ -263,7 +306,7 @@
         function pauseSong() {
             audioElement.pause();
             isPlaying = false;
-            songTitleElement.classList.remove('playing'); // Regresa a blanco (#ffffff)
+            songTitleElement.classList.remove('playing');
         }
 
         function togglePlay() {
@@ -306,7 +349,7 @@
         });
 
         // --- Control de Volumen ---
-        audioElement.volume = 0.8; // Inicial al 80%
+        audioElement.volume = 0.8;
 
         volumeSlider.addEventListener('input', () => {
             const val = volumeSlider.value;
