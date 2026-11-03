@@ -78,27 +78,20 @@
             transform: scale(0.9);
         }
 
-        #song-info {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            gap: 12px;
-        }
-
         #song-title {
             font-size: 18px;
-            color: #ffff00;
+            color: #ffffff; /* Por defecto en blanco */
             text-align: center;
             min-width: 300px;
             max-width: 450px;
             word-wrap: break-word;
+            cursor: pointer;
+            transition: color 0.1s;
         }
 
-        #play-status {
-            font-size: 9px;
-            color: #888888;
-            letter-spacing: 1px;
+        /* Clase dinámica que aplica el color amarillo solo al sonar */
+        #song-title.playing {
+            color: #ffff00;
         }
 
         /* --- Estilos compartidos para sliders --- */
@@ -187,10 +180,8 @@
         <div class="player-container">
             <div class="arrow" id="prev-btn">&lt;&lt;</div>
             
-            <div id="song-info" title="Click to Play / Pause">
-                <div id="song-title">intro theme</div>
-                <div id="play-status">[ PAUSED ]</div>
-            </div>
+            <!-- Título que actúa como botón Play/Pause sin div extra ni estado abajo -->
+            <div id="song-title" title="Click to Play / Pause">Precise Shine</div>
 
             <div class="arrow" id="next-btn">&gt;&gt;</div>
         </div>
@@ -214,7 +205,7 @@
 
     <div class="instructions">
         Use the arrows <b>[ &lt;&lt; ] [ &gt;&gt; ]</b> to change tracks<br>
-        Click on the title or status to play / pause
+        Click on the song title to play / pause
     </div>
 
     <!-- Audio element -->
@@ -234,10 +225,8 @@
 
         const audioElement = document.getElementById('audio-element');
         const songTitleElement = document.getElementById('song-title');
-        const playStatusElement = document.getElementById('play-status');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
-        const songInfoContainer = document.getElementById('song-info');
         
         const seekSlider = document.getElementById('seek-slider');
         const currentTimeElement = document.getElementById('current-time');
@@ -265,8 +254,7 @@
         function playSong() {
             audioElement.play().then(() => {
                 isPlaying = true;
-                playStatusElement.textContent = "[ PLAYING ]";
-                playStatusElement.style.color = "#00ff00";
+                songTitleElement.classList.add('playing'); // Cambia a amarillo (#ffff00)
             }).catch(error => {
                 console.log("Playback error:", error);
             });
@@ -275,8 +263,7 @@
         function pauseSong() {
             audioElement.pause();
             isPlaying = false;
-            playStatusElement.textContent = "[ PAUSED ]";
-            playStatusElement.style.color = "#888888";
+            songTitleElement.classList.remove('playing'); // Regresa a blanco (#ffffff)
         }
 
         function togglePlay() {
@@ -337,7 +324,7 @@
             prevSong();
         });
 
-        songInfoContainer.addEventListener('click', togglePlay);
+        songTitleElement.addEventListener('click', togglePlay);
 
         audioElement.addEventListener('ended', () => {
             nextSong();
